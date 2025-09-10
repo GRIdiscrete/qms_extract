@@ -1,11 +1,13 @@
 // app/api/freshcaller/jobs/[id]/route.ts
 export async function GET(
   _req: Request,
-  { params }: { params: Record<string, string> } // ✅ valid for Next
+  { params }: { params: Promise<{ id: string }> } // 👈 params is a Promise
 ) {
   try {
+    const { id } = await params; // 👈 await it
+
     const res = await fetch(
-      `${process.env.FRESHCALLER_BASE_URL}/api/v1/jobs/${params.id}`,
+      `${process.env.FRESHCALLER_BASE_URL}/api/v1/jobs/${id}`,
       {
         headers: {
           Accept: "application/json",
