@@ -2,9 +2,9 @@
 
 export async function GET(
   _req: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
-  const { id } = params;
+  const { id } = await params;
 
   try {
     const res = await fetch(
@@ -17,7 +17,6 @@ export async function GET(
       }
     );
 
-    // pass through the status from upstream
     const data = await res.json();
     return new Response(JSON.stringify(data), {
       status: res.status,
