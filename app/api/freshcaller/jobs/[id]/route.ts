@@ -1,11 +1,9 @@
 // app/api/freshcaller/jobs/[id]/route.ts
 import type { NextRequest } from "next/server";
 
-export async function GET(
-  _req: NextRequest,
-  ctx: RouteContext<"/api/freshcaller/jobs/[id]">
-) {
-  const { id } = await ctx.params; // <- params is async in Next 15
+
+export async function GET(req: NextRequest) {
+  const id = req.nextUrl.pathname.split("/").pop()!;
 
   try {
     const res = await fetch(
