@@ -1,9 +1,10 @@
 // app/api/freshcaller/jobs/[id]/route.ts
-import type { NextRequest } from "next/server";
 
-
-export async function GET(req: NextRequest) {
-  const id = req.nextUrl.pathname.split("/").pop()!;
+export async function GET(
+  _req: Request,
+  { params }: { params: { id: string } }
+) {
+  const { id } = params;
 
   try {
     const res = await fetch(
@@ -15,10 +16,18 @@ export async function GET(req: NextRequest) {
         },
       }
     );
-    const data: unknown = await res.json();
-    return new Response(JSON.stringify(data), { status: res.status });
+
+    // pass through the status from upstream
+    const data = await res.json();
+    return new Response(JSON.stringify(data), {
+      status: res.status,
+      headers: { "content-type": "application/json" },
+    });
   } catch (e: unknown) {
     const msg = e instanceof Error ? e.message : "error";
-    return new Response(JSON.stringify({ error: msg }), { status: 500 });
+    return new Response(JSON.stringify({ error: msg }), {
+      status: 500,
+      headers: { "content-type": "application/json" },
+    });
   }
 }
