@@ -1,11 +1,13 @@
 // app/api/freshcaller/jobs/[id]/route.ts
-export async function GET(
-  _req: Request,
-  { params }: { params: Promise<{ id: string }> } // 👈 params is a Promise
-) {
-  try {
-    const { id } = await params; // 👈 await it
+import type { NextRequest } from "next/server";
 
+export async function GET(
+  _req: NextRequest,
+  ctx: RouteContext<"/api/freshcaller/jobs/[id]">
+) {
+  const { id } = await ctx.params; // <- params is async in Next 15
+
+  try {
     const res = await fetch(
       `${process.env.FRESHCALLER_BASE_URL}/api/v1/jobs/${id}`,
       {
@@ -15,7 +17,6 @@ export async function GET(
         },
       }
     );
-
     const data: unknown = await res.json();
     return new Response(JSON.stringify(data), { status: res.status });
   } catch (e: unknown) {
